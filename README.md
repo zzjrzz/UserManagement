@@ -1,4 +1,6 @@
 # User Management
+[![Build Status](https://travis-ci.com/zzjrzz/UserManagement.svg?branch=master)](https://travis-ci.com/zzjrzz/UserManagement)
+
 .NET application for management of users
 
 We have a fictitious scenario where we'd like to build an API to manage users. We require
