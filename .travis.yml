@@ -1,0 +1,7 @@
+language: csharp
+solution: "./UserManagement/UserManagement.sln"
+install:
+  - travis_retry nuget restore -source "https://www.nuget.org/api/v2" ./UserManagement/UserManagement.sln
+script:
+  - xbuild ./UserManagement/UserManagement.sln
+  - mono ./UserManagement/packages/xunit.runner.console*/tools/xunit.console.exe ./UserManagement/UserManagementTests/bin/Debug/UserManagementTests.dll
