@@ -3,7 +3,7 @@ solution: "./UserManagement.sln"
 mono: none
 dotnet: 3.1
 install:
-  - dotnet restore
+  - dotnet restore UserManagement.sln
 script:
-  - dotnet build
+  - dotnet build UserManagement.sln
   - dotnet test UserManagementTests/UserManagementTests.csproj
