@@ -6,14 +6,12 @@ networks:
 
 services:
   usermanagement:
-    image: usermanagement:latest
-    depends_on:
-      - "postgres_image"
+    image: ${DOCKER_REGISTRY-}usermanagement
     build:
       context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8000:80"     
+      dockerfile: UserManagement/Dockerfile
+    depends_on:
+      - "postgres_image"
     environment:
       DB_CONNECTION_STRING: "host=postgres_image;port=5432;database=userdb;username=useradmin;password=sjAdi81l"
     networks:
@@ -26,7 +24,7 @@ services:
     restart: always
     volumes:
       - db_volume:/var/lib/postgresql/data
-      - ./dbscripts/seed.sql:/docker-entrypoint-initdb.d/seed.sql
+      - ./seed.sql:/docker-entrypoint-initdb.d/seed.sql
     environment:
       POSTGRES_USER: "useradmin"
       POSTGRES_PASSWORD: "sjAdi81l"

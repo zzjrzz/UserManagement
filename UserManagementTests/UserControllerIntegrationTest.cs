@@ -1,15 +1,14 @@
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Testing;
 using UserManagement;
 using Xunit;
 
 namespace UserManagementTests
 {
-    public class UserControllerIntegrationTest: IClassFixture<WebApplicationFactory<Startup>>
+    public class UserControllerIntegrationTest: IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private readonly WebApplicationFactory<Startup> _webApplicationFactory;
+        private readonly CustomWebApplicationFactory<Startup> _webApplicationFactory;
 
-        public UserControllerIntegrationTest(WebApplicationFactory<Startup> webApplicationFactory)
+        public UserControllerIntegrationTest(CustomWebApplicationFactory<Startup> webApplicationFactory)
         {
             _webApplicationFactory = webApplicationFactory;
         }
@@ -22,7 +21,7 @@ namespace UserManagementTests
             var response = await client.GetAsync("/api/user");
             
             response.EnsureSuccessStatusCode();
-            Assert.Equal("text/html; charset=utf-8", 
+            Assert.Equal("application/json; charset=utf-8", 
                 response.Content.Headers.ContentType.ToString());
         }
     }
