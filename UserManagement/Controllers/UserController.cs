@@ -3,6 +3,7 @@ using System.Linq;
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using UserManagement.Models;
 using UserManagement.Models.Validators;
 
@@ -13,10 +14,12 @@ namespace UserManagement.Controllers
     public class UserController : ControllerBase
     {
         private readonly ApiDbContext _context;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(ApiDbContext context)
+        public UserController(ApiDbContext context, ILogger<UserController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -46,10 +49,12 @@ namespace UserManagement.Controllers
             }
             catch (ValidationTestException exception)
             {
+                _logger.LogError($"{exception.Message} : {exception.StackTrace}");
                 return BadRequest("Email format is not acceptable");
             }
             catch (Exception exception)
             {
+                _logger.LogError($"{exception.Message} : {exception.StackTrace}");
                 return StatusCode(500);
             }
 
