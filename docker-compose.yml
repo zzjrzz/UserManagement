@@ -2,7 +2,7 @@ version: '3.4'
 
 networks:
   usermanagement-dev:
-    driver: bridge 
+    driver: bridge
 
 services:
   usermanagement:
@@ -10,13 +10,15 @@ services:
     build:
       context: .
       dockerfile: UserManagement/Dockerfile
+    ports:
+      - "8000:80"
     depends_on:
       - "postgres_image"
     environment:
       DB_CONNECTION_STRING: "host=postgres_image;port=5432;database=userdb;username=useradmin;password=sjAdi81l"
     networks:
       - usermanagement-dev
-  
+
   postgres_image:
     image: postgres:latest
     ports:

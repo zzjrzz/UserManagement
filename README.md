@@ -42,7 +42,7 @@ want to include.
 3. EF Core
 
 ## Steps
-1. `docker-compose build`
-
-2. `docker-compose up`
+1. `dotnet dev-certs https --trust`
+2. `docker-compose build`
+3. `docker-compose up`
 

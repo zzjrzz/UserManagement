@@ -1,4 +1,5 @@
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Models;
 
@@ -16,15 +17,15 @@ namespace UserManagement.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public object Get()
         {
-            return _context.Users.Select((c) => new
-            {
-                c.Name,
-                c.Email,
-                c.Salary,
-                c.Expenses
-            }).ToList();
+            var users = _context.Users;
+
+            if (!users.Any())
+                return NoContent();
+            return Ok(users);
         }
 
         [HttpGet("{email}")]
