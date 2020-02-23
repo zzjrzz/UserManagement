@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
+using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using UserManagement.Models;
-using UserManagement.Models.Validators;
 
 namespace UserManagement.Controllers
 {
@@ -15,11 +15,16 @@ namespace UserManagement.Controllers
     {
         private readonly ApiDbContext _context;
         private readonly ILogger<UserController> _logger;
+        private readonly IValidator<User> _validator;
 
-        public UserController(ApiDbContext context, ILogger<UserController> logger)
+        public UserController(
+            ApiDbContext context,
+            ILogger<UserController> logger,
+            IValidator<User> validator)
         {
             _context = context;
             _logger = logger;
+            _validator = validator;
         }
 
         [HttpGet]
@@ -41,15 +46,14 @@ namespace UserManagement.Controllers
         public object GetByEmail(string email)
         {
             var user = new User {Email = email};
-            var validator = new UserValidator();
-            
+
             try
             {
-                validator.TestValidate(user).ShouldNotHaveValidationErrorFor(x => x.Email);
+                _validator.TestValidate(user).ShouldNotHaveValidationErrorFor(x => x.Email);
             }
             catch (ValidationTestException exception)
             {
-                _logger.LogError($"{exception.Message} : {exception.StackTrace}");
+                _logger.LogWarning($"{exception.Message} : {exception.StackTrace}");
                 return BadRequest("Email format is not acceptable");
             }
             catch (Exception exception)
@@ -59,6 +63,33 @@ namespace UserManagement.Controllers
             }
 
             return _context.Users.Where(b => b.Email == user.Email).ToList();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status304NotModified)]
+        public object Create([FromBody] User user)
+        {
+            try
+            {
+                if (!_validator.TestValidate(user).IsValid)
+                {
+                    var errorReturned = _validator.TestValidate(user).Errors.Aggregate("", 
+                        (current, error) => current +  error.ErrorMessage);
+                    return BadRequest(errorReturned);
+                }
+
+                _context.Users.Add(user);
+                _context.SaveChanges();
+                return Created("/api/create", user);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError($"{exception.Message} : {exception.StackTrace}");
+                return StatusCode(500);
+            }
         }
     }
 }

@@ -1,12 +1,15 @@
 ﻿using System;
+using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using UserManagement.Models;
+using UserManagement.Models.Validators;
 
 namespace UserManagement
 {
@@ -35,6 +38,15 @@ namespace UserManagement
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "User API", Version = "v1" });
             });
+            
+            services.AddLogging(builder =>
+                builder
+                    .AddDebug()
+                    .AddConsole()
+                    .SetMinimumLevel(LogLevel.Information)
+            ); 
+            
+            services.AddTransient<IValidator<User>, UserValidator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
