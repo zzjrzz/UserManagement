@@ -47,6 +47,7 @@ namespace UserManagement
             ); 
             
             services.AddTransient<IValidator<User>, UserValidator>();
+            services.AddTransient<IValidator<Account>, AccountValidator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

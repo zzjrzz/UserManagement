@@ -67,9 +67,10 @@ namespace UserManagement.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status304NotModified)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status304NotModified)]
         public object Create([FromBody] User user)
         {
             try
@@ -79,6 +80,11 @@ namespace UserManagement.Controllers
                     var errorReturned = _validator.TestValidate(user).Errors.Aggregate("", 
                         (current, error) => current +  error.ErrorMessage);
                     return BadRequest(errorReturned);
+                }
+
+                if (_context.Users.Any(existingUser => existingUser.Email == user.Email))
+                {
+                    return Conflict("user email already exists");
                 }
 
                 _context.Users.Add(user);

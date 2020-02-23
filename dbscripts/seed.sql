@@ -11,3 +11,10 @@ CREATE TABLE users
 );
 
 ALTER TABLE users OWNER TO useradmin;
+
+CREATE TABLE accounts
+(
+   id uuid PRIMARY KEY
+);
+
+ALTER TABLE accounts OWNER TO useradmin;
