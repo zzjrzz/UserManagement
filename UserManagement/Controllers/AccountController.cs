@@ -4,6 +4,7 @@ using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using UserManagement.Models;
 
@@ -61,6 +62,9 @@ namespace UserManagement.Controllers
                     {
                         return UnprocessableEntity("user is not eligible for account with salary - expenses < 1000");
                     }
+
+                    if (_context.Accounts.Any(a => a.User.Email == email))
+                        return UnprocessableEntity("user already has an account");
 
                     _context.Accounts.Add(account);
                     _context.SaveChanges();
